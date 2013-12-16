@@ -18,7 +18,20 @@ ec2 = AWS::EC2.new(:ec2_endpoint => 'ec2.us-west-1.amazonaws.com')
 
 puts "creating the key"
 key_pair = ec2.key_pairs.create("ruby-test-key-#{time}")
-private_key = key_pair.private_key;
+private_key = key_pair.private_key
+
+home = ENV['HOME']
+puts "HOME IS: #{home}"
+file = "#{home}/.ssh/ec2-#{time}"
+File.open("#{file}", "wb") do |f|
+  f.write(key_pair.private_key)
+end
+
+File.chmod(0660, "#{file}")
+
+#public_key = key_pair.public_key
+puts "Private Key is #{private_key}"
+#puts "Public Key is #{public_key}"
 
 puts "creating the sec group"
 security_group = ec2.security_groups.create("ruby-test-sec-group-#{time}")
@@ -29,7 +42,7 @@ security_group.authorize_ingress :tcp, 22, *ip_addresses
 
 puts "creating the instance"
 instance = ec2.instances.create(
-  :image_id => 'ami-11d68a54',
+  :image_id => 'ami-24a69061',
   :instance_type => 'm1.small',
   :count => 1, 
   :security_groups => "ruby-test-sec-group-#{time}", 
@@ -46,6 +59,16 @@ if instance.exists?
   dns = instance.dns_name
 
   puts "DNS name is : #{dns}"
+
+#  key = Net::SSH::Authentication::KeyManager.new
+
+#  key.add(private_key)
+
+#  Net::SSH.start("#{dns}", "ubuntu", :) do |ssh|
+#  result = ssh.exec!("ls -l")
+#  puts result
+
+#  end
 
 else
   puts "instance does not exist"
