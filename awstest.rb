@@ -14,7 +14,7 @@ AWS.config(YAML.load(File.read(config_file)))
 time = Time.now
 
 puts "creating the ec2 object"
-ec2 = AWS::EC2.new(:ec2_endpoint => 'ec2.us-west-1.amazonaws.com')
+ec2 = AWS::EC2.new(:ec2_endpoint => 'ec2.us-east-1.amazonaws.com')
 
 puts "creating the key"
 key_pair = ec2.key_pairs.create("ruby-test-key-#{time}")
@@ -42,8 +42,8 @@ security_group.authorize_ingress :tcp, 22, *ip_addresses
 
 puts "creating the instance"
 instance = ec2.instances.create(
-  :image_id => 'ami-24a69061',
-  :instance_type => 'm1.small',
+  :image_id => 'ami-ce35d1a6',
+  :instance_type => 'g2.2xlarge',
   :count => 1, 
   :security_groups => "ruby-test-sec-group-#{time}", 
   :key_pair => ec2.key_pairs["ruby-test-key-#{time}"]
