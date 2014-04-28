@@ -38,7 +38,7 @@ security_group = ec2.security_groups.create("ruby-test-sec-group-#{time}")
 
 ip_addresses = ["#{ip}/0"]
 
-security_group.authorize_ingress :tcp, 22, *ip_addresses		
+security_group.authorize_ingress :tcp, 3389, '0.0.0.0/0'
 
 puts "creating the instance"
 instance = ec2.instances.create(
